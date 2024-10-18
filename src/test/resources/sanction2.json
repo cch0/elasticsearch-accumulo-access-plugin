@@ -1,0 +1,30 @@
+{
+  "id": "26928",
+  "entity_type": "Individual",
+  "sanction_list_ids": "SDN List",
+  "sanction_list_publish_dates": "2019-08-30",
+  "sanction_programs": "DPRK4",
+  "sanction_type": "Block",
+  "legal_authorities": "Executive Order 13810 (North Korea)",
+  "entity_names": "CHEN, Mei Hsiang, 陳美香, CHEN, Mei-Hsiang",
+  "address_country": "Taiwan",
+  "gender": "Female",
+  "secondary_sanctions_risk:": "North Korea Sanctions Regulations, sections 510.201 and 510.210",
+  "nationality_country": "Taiwan",
+  "birthdate": "1961-05-06",
+  "transactions_prohibited_for_persons_owned_or_controlled_by_u.s._financial_institutions:": "North Korea Sanctions Regulations section 510.214",
+  "identity_documents": [
+    {
+      "document_type": "Passport",
+      "document_name": "CHEN, Mei Hsiang",
+      "document_number": "314009735",
+      "document_valid": "true"
+    },
+    {
+      "document_type": "National ID No.",
+      "document_name": "CHEN, Mei Hsiang",
+      "document_number": "Q221029421",
+      "document_valid": "true"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "field1": ["BLUE"],
+  "field2": ["BLUE", "GREEN"],
+  "field3": ["BLUE", "BLUE"],
+  "field4": ["BL UE", "GREEN, PINK"],
+  "field5": {
+    "field51": [
+      "BLUE"
+    ],
+    "field52": [
+      "BLUE", "GREEN"
+    ],
+    "field53": [
+      "BL UE", "GREEN, PINK"
+    ],
+    "field54": {
+      "field541": "BLUE",
+      "field542": ["BLUE", "GREEN"],
+      "field543": {
+        "field5431": "BLUE"
+      }
+    }
+  },
+  "field6": 123,
+  "field7": 123.456,
+  "field8": {
+    "field81": 123,
+    "field82": 123.456,
+    "field83": [123],
+    "field84": [123.456],
+    "field85": [123.456, 789.0],
+    "field86": {
+      "field861": 123,
+      "field862": [123.456],
+      "field863": [123.456, 789.0],
+      "field864": {
+        "field8641": 123
+      },
+      "field865": [123, 456],
+      "field866": 123.456
+    },
+    "field87": [123, 456]
+  },
+  "field9": [123, 456],
+  "field10": [123],
+  "field11": [123.456],
+  "field12": [123.456, 789.0],
+  "field13": [123, 789.0, "BLUE", "GREEN", "BL UE", "PINK, GREEN"],
+  "field14": {
+    "field141": [123, 789.0, "BLUE", "GREEN", "BL UE", "PINK, GREEN"]
+  },
+  "field15": [],
+  "field16": ["BLUE_GREEN", "BLUE#GREEN", "BLUE\\GREEN", "BLUE,GREEN", "BLUE-GREEN", "BLUE:GREEN", "BLUE.GREEN", "BLUE/GREEN"],
+  "field17": "IFSR, SDGT",
+  "field18": "IFSR SDGT"
+}

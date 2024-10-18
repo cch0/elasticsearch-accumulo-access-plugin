@@ -1,0 +1,94 @@
+import java.util.regex.Matcher
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath group: 'org.elasticsearch.gradle', name: 'build-tools', version: elasticsearch_version
+    }
+}
+
+plugins {
+    id 'java'
+    id 'distribution'
+    id 'net.researchgate.release' version '3.0.2'
+}
+
+release {
+    failOnCommitNeeded = true
+    failOnPublishNeeded = true
+    failOnSnapshotDependencies = true
+    failOnUnversionedFiles = true
+    failOnUpdateNeeded = true
+    preTagCommitMessage = '[Gradle Release Plugin] - pre tag commit: '
+    tagCommitMessage = '[Gradle Release Plugin] - creating tag: '
+    newVersionCommitMessage = '[Gradle Release Plugin] - new version commit: '
+    tagTemplate = '${version}'
+    versionPropertyFile = 'gradle.properties'
+    snapshotSuffix = '-SNAPSHOT'
+    buildTasks = []
+    versionPatterns = [
+            /(\d+)\.(\d+)\.(\d+)(.*)/ : { Matcher m, Project p ->
+                def major = m.group(1) as int
+                def minor = (m.group(2) as int) + 1
+                def patch = 0
+                def suffix = m.group(4)
+                "${major}.${minor}.${patch}${suffix}"
+            }
+    ]
+
+    git {
+        requireBranch.set('main')
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'elasticsearch.esplugin'
+
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly group: 'org.elasticsearch', name: 'elasticsearch', version: elasticsearch_version
+    implementation group: 'org.apache.accumulo', name: 'accumulo-access', version: accumulo_access
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4j_api
+    testImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jackson_databind
+    testImplementation platform(group: 'org.junit', name: 'junit-bom', version: junit_bom)
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(java_source_version)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = Integer.parseInt(java_target_version)
+}
+
+test {
+    useJUnitPlatform()
+}
+
+group = 'com.elasticsearch.data'
+
+esplugin {
+    name "accumulo-access"
+    description 'A plugin for applying attribute based access control to documents'
+    classname 'com.elasticsearch.data.elasticsearch.AccumuloAccessPlugin'
+    licenseFile rootProject.file('LICENSE.txt')
+    noticeFile rootProject.file('NOTICE.txt')
+}
+
+task printVersion {
+    doLast {
+        println "Version:${project.version}"
+    }
+}

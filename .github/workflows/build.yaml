@@ -1,0 +1,183 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  push:
+    # disable triggering for the following paths and files
+    paths-ignore:
+      - '.github/**'
+      - 'gradle.properties'
+      - '.gitignore'
+      - 'README.md'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'LICENSE'
+      - 'docs/**'
+      - 'gradle/**'
+
+
+env:
+  GRADLE_VERSION: "8.10"
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        profile: [
+          {
+            java_source_version: "22",
+            java_target_version: "17",
+            elasticsearch_version: "8.15.0"
+          },
+          {
+            java_source_version: "22",
+            java_target_version: "21",
+            elasticsearch_version: "8.15.0"
+          },
+          {
+            java_source_version: "22",
+            java_target_version: "22",
+            elasticsearch_version: "8.15.0"
+          }
+        ]
+
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: corretto
+          java-version: ${{ matrix.profile.java_source_version }}
+
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+
+
+      - name: Echo
+        run: |
+          VERSION=$(gradle printVersion | grep "Version:" | awk -F':' '{print $2}')
+          echo "VERSION is $VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+
+      - name: Build with Gradle
+        run: |
+          ./gradlew build \
+            -Pjava_source_version=${{ matrix.profile.java_source_version}} \
+            -Pjava_target_version=${{ matrix.profile.java_target_version }} \
+            -Pelasticsearch_version=${{ matrix.profile.elasticsearch_version }}
+
+
+      - name: Echo output
+        run: |
+            ls -l build/distributions
+
+
+      - name: Upload zip file as a Github artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: accumulo-access-es_${{ matrix.profile.elasticsearch_version }}-jdk_${{ matrix.profile.java_target_version }}-${{ env.VERSION }}
+          path: |
+            ${{ github.workspace }}/build/distributions/accumulo-access-*.zip
+          retention-days: 10
+
+
+  release:
+    needs: [build]
+
+    runs-on: ubuntu-22.04
+
+    if: ${{ github.ref == 'refs/heads/main' }}
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: corretto
+          java-version: 17
+
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+
+
+      - name: Setup git config
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"          
+
+
+      - name: Stash staged changes
+        run: |
+          git stash
+          
+
+      - name: Echo
+        run: |
+          echo "===> echo current version"
+          echo "\n===> echo current version"
+          VERSION=$(gradle printVersion | grep "Version:" | awk -F':' '{print $2}')
+          echo "VERSION is $VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          
+          echo "\n===> git status"
+          git status
+          
+
+      - name: Release
+        run: | 
+          echo "===> perform release"
+          ./gradlew release -Prelease.useAutomaticVersion=true
+
+
+      - name: Echo output
+        run: |
+          echo "===> git status"
+          git status
+
+          echo "\n===> echo new version"
+          NEW_VERSION=$(gradle printVersion | grep "Version:" | awk -F':' '{print $2}')
+          echo "NEW_VERSION is $NEW_VERSION"
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+
+      - name: Download zip file artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: accumulo-access-*
+          merge-multiple: true
+
+
+      - name: List downloaded files
+        run: |
+          ls -l artifacts
+
+
+      - name: Create Github release
+        uses: ncipollo/release-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.KDP_GHCR_TOKEN }}
+        with:
+          artifacts: "artifacts/*"
+          tag: ${{ env.VERSION }}
+          generateReleaseNotes: false
+          makeLatest: true

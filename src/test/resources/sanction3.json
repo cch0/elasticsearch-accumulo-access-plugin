@@ -1,0 +1,32 @@
+{
+  "id": "23170",
+  "entity_type": "Individual",
+  "sanction_list_ids": "SDN List",
+  "sanction_list_publish_dates": "2017-11-21",
+  "sanction_programs": "DPRK4",
+  "sanction_type": "Block",
+  "legal_authorities": "Executive Order 13810 (North Korea)",
+  "entity_names": "SUN, Sidong",
+  "address_country": "China",
+  "birthdate": "1976-05-11",
+  "place_of_birth": "Dandong, China",
+  "gender": "Male",
+  "secondary_sanctions_risk:": "North Korea Sanctions Regulations, sections 510.201 and 510.210",
+  "transactions_prohibited_for_persons_owned_or_controlled_by_u.s._financial_institutions:": "North Korea Sanctions Regulations section 510.214",
+  "identity_documents": [
+    {
+      "document_type": "National ID No.",
+      "document_name": "SUN, Sidong",
+      "document_number": "210623197605112215",
+      "document_valid": "true"
+    },
+    {
+      "document_type": "Passport",
+      "document_name": "SUN, Sidong",
+      "document_number": "G55296890",
+      "document_valid": "true",
+      "issuing_country": "China",
+      "expiration_data": "2021-09-14"
+    }
+  ]
+}
